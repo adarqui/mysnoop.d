@@ -1,0 +1,61 @@
+mysnoop.d -- Andrew Darqui (adarq.org)
+
+Simple execve/chdir snooper for dtrace. This will print out some uid/gid/pid info etc, then the interesting arguments to execve's argv[] and chdir.
+
+Simply make mysnoop.d +x then run it: 
+
+	chmod 755 mysnoop.d
+	./mysnoop.d
+
+
+This is good for simple easy on the eye logs but limited to 8 arguments. Obviously 8 arguments is far from perfect, but until the dtrace package fixes curlwpthread/curthread etc, this should somewhat suffice. For much better and far more comprehensive logs, install auditd and use ausearch -i etc.
+
+Here's the dtrace package i'm using on debian linux:
+
+	ftp://crisp.dyndns-server.com/pub/release/website/dtrace/dtrace-20120819.tar.bz2
+
+
+
+Example output:
+
+  UID   GID   PID   EXECFROM              PROGRAM ARGUMENTS
+    0     0  2705       bash         /usr/bin/vim -> vim README
+    0     0  2706        vim                chdir /home/data/git/mysnoop.d
+    0     0  2706        vim                chdir /usr/share/vim
+    0     0  2706        vim                chdir /usr/share/vim/vim72
+    0     0  2706        vim                chdir /home/root
+    0     0  2706        vim                chdir /usr/share/vim/vim72/syntax
+    0     0  2706        vim                chdir /usr/share/vim/vim72
+    0     0  2706        vim                chdir /usr/share/vim/vim72/plugin
+    0     0  2706        vim                chdir /usr/share/vim/vim72
+    0     0  2706       bash         /usr/bin/vim -> vim LICENSE
+    0     0  2707       bash              /bin/ls -> ls -al
+    0     0  2717       bash         /usr/bin/vim -> vim README
+    0     0  2708       bash         /usr/bin/awk -> awk /^complete[ \t]+.*[ \t]vim([ \t]|$)/ { print $0; exit } /etc/bash_completion
+    0     0  2717        vim                chdir /home/data/git/mysnoop.d
+    0     0  2600 updatedb.mlocat                chdir ip
+    0     0  2600 updatedb.mlocat                chdir net
+    0     0  2600 updatedb.mlocat                chdir ohci
+    0     0  2600 updatedb.mlocat                chdir pwc
+    0     0  2600 updatedb.mlocat                chdir serial
+    0     0  2600 updatedb.mlocat                chdir storage
+    0     0  2600 updatedb.mlocat                chdir video
+    0     0  2600 updatedb.mlocat                chdir class
+    0     0  2600 updatedb.mlocat                chdir use
+    0     0  2600 updatedb.mlocat                chdir generic
+    0     0  2600 updatedb.mlocat                chdir user
+    0     0  2600 updatedb.mlocat                chdir uwb
+    0     0  2600 updatedb.mlocat                chdir v4l
+    0     0  2600 updatedb.mlocat                chdir video
+    0     0  2611     passwd         /usr/bin/cmp -> cmp -s shadow.bak /etc/shadow
+    0     0  2612     passwd         /usr/bin/cmp -> cmp -s gshadow.bak /etc/gshadow
+    0     0  2613  run-parts /etc/cron.daily/prelink -> /etc/cron.daily/prelink
+    0     0  2614    prelink      /usr/bin/renice -> renice +19 -p 2613
+    0     0  2615  run-parts /etc/cron.daily/standard -> /etc/cron.daily/standard
+    0     0  2616   standard         /usr/bin/cmp -> cmp -s passwd.bak /etc/passwd
+    0     0  2617   standard         /usr/bin/cmp -> cmp -s group.bak /etc/group
+    0     0  2618   standard         /usr/bin/cmp -> cmp -s shadow.bak /etc/shadow
+    0     0  2619   standard         /usr/bin/cmp -> cmp -s gshadow.bak /etc/gshadow
+    0     0  2641   standard             /bin/sed -> sed s/^/    /
+    0     0  2652  run-parts /etc/cron.daily/sysstat -> /etc/cron.daily/sysstat
+    0     0  2655        sa2            /bin/date -> date --date=yesterday +%d
